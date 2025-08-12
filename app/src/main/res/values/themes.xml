@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Use only the MaterialComponents theme for Theme.LocMark -->
+    <style name="Theme.LocMark" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+</resources>
