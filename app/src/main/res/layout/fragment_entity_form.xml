@@ -14,25 +14,19 @@
             android:layout_height="wrap_content"
             android:hint="Title" />
 
-        <TextView
-            android:id="@+id/textLat"
+        <EditText
+            android:id="@+id/editLat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Latitude: "
-            android:paddingTop="8dp" />
+            android:hint="Latitude"
+            android:inputType="numberDecimal|numberSigned" />
 
-        <TextView
-            android:id="@+id/textLon"
+        <EditText
+            android:id="@+id/editLon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Longitude: " />
-
-        <Button
-            android:id="@+id/btnGetLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Get Current Location"
-            android:layout_marginTop="8dp" />
+            android:hint="Longitude"
+            android:inputType="numberDecimal|numberSigned" />
 
         <ImageView
             android:id="@+id/imagePreview"

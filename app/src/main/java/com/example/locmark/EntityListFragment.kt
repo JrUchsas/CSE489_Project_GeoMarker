@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.locmark.adapter.EntityListAdapter
@@ -14,7 +14,7 @@ import com.example.locmark.viewmodel.MapViewModel
 class EntityListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: EntityListAdapter
-    private val viewModel: MapViewModel by viewModels()
+    private val viewModel: MapViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

@@ -19,16 +19,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.locmark.viewmodel.EntityFormViewModel
+import com.example.locmark.viewmodel.MapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 class EntityFormFragment : Fragment() {
     private lateinit var editTitle: EditText
-    private lateinit var textLat: TextView
-    private lateinit var textLon: TextView
-    private lateinit var btnGetLocation: Button
+    private lateinit var editLat: EditText
+    private lateinit var editLon: EditText
     private lateinit var imagePreview: ImageView
     private lateinit var btnSelectImage: Button
     private lateinit var btnSave: Button
@@ -37,6 +38,7 @@ class EntityFormFragment : Fragment() {
     private var lon: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel: EntityFormViewModel by viewModels()
+    private val sharedMapViewModel: MapViewModel by activityViewModels()
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -50,9 +52,8 @@ class EntityFormFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_entity_form, container, false)
         editTitle = view.findViewById(R.id.editTitle)
-        textLat = view.findViewById(R.id.textLat)
-        textLon = view.findViewById(R.id.textLon)
-        btnGetLocation = view.findViewById(R.id.btnGetLocation)
+        editLat = view.findViewById(R.id.editLat)
+        editLon = view.findViewById(R.id.editLon)
         imagePreview = view.findViewById(R.id.imagePreview)
         btnSelectImage = view.findViewById(R.id.btnSelectImage)
         btnSave = view.findViewById(R.id.btnSave)
@@ -65,45 +66,33 @@ class EntityFormFragment : Fragment() {
         btnSelectImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
-        btnGetLocation.setOnClickListener {
-            getLocation()
-        }
         btnSave.setOnClickListener {
             val title = editTitle.text.toString()
-            val latValue = lat
-            val lonValue = lon
-            if (title.isBlank() || latValue == null || lonValue == null || imageUri == null) {
+            val latStr = editLat.text.toString()
+            val lonStr = editLon.text.toString()
+            val image = imageUri
+            val latValue = latStr.toDoubleOrNull()
+            val lonValue = lonStr.toDoubleOrNull()
+            if (title.isBlank() || latValue == null || lonValue == null || image == null) {
                 Toast.makeText(requireContext(), "Fill all fields and select an image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            viewModel.createEntity(title, latValue, lonValue, imageUri)
+            if (latValue !in -90.0..90.0 || lonValue !in -180.0..180.0) {
+                Toast.makeText(requireContext(), "Latitude must be between -90 and 90, Longitude between -180 and 180", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            viewModel.createEntity(title, latValue, lonValue, image)
         }
         viewModel.saveResult.observe(viewLifecycleOwner) { success ->
             if (success == true) {
                 Toast.makeText(requireContext(), "Entity saved!", Toast.LENGTH_SHORT).show()
+                sharedMapViewModel.fetchEntities() // Refresh the list after creation
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
         viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
             errorMsg?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun getLocation() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
-            return
-        }
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                lat = location.latitude
-                lon = location.longitude
-                textLat.text = "Latitude: $lat"
-                textLon.text = "Longitude: $lon"
-            } else {
-                Toast.makeText(requireContext(), "Unable to get location", Toast.LENGTH_SHORT).show()
             }
         }
     }
