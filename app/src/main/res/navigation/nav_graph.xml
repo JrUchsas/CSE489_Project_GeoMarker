@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.geomarker.MapFragment"
-        android:label="Map" />
+        android:label="Map" >
+        <action
+            android:id="@+id/action_mapFragment_to_imageDetailFragment"
+            app:destination="@id/imageDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/entityFormFragment"
         android:name="com.example.geomarker.EntityFormFragment"
@@ -24,5 +28,16 @@
         <action
             android:id="@+id/action_entityListFragment_to_entityFormFragment"
             app:destination="@id/entityFormFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageDetailFragment"
+        android:name="com.example.geomarker.ImageDetailFragment"
+        android:label="Image Detail">
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
     </fragment>
 </navigation>

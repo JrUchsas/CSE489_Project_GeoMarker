@@ -12,22 +12,27 @@ import com.example.geomarker.model.Entity
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
+import androidx.navigation.Navigation
+import android.os.Bundle
+import com.example.geomarker.R
 
 class CustomMarkerInfoWindow(mapView: MapView) : MarkerInfoWindow(R.layout.marker_info_window, mapView) {
+
+    private val BASE_IMAGE_URL = "https://labs.anontech.info/cse489/t3/"
 
     override fun onOpen(item: Any?) {
         if (item is Marker) {
             val entity = item.relatedObject as? Entity
             if (entity != null) {
                 mView.findViewById<TextView>(R.id.info_title).text = entity.title
-                mView.findViewById<TextView>(R.id.info_description).text = "Lat: ${entity.lat}, Lon: ${entity.lon}"
 
                 val imageView = mView.findViewById<ImageView>(R.id.info_image)
                 if (!entity.imageUrl.isNullOrEmpty()) {
                     imageView.visibility = View.VISIBLE
+                    val fullImageUrl = BASE_IMAGE_URL + entity.imageUrl
                     Glide.with(imageView.context)
                         .asBitmap()
-                        .load(entity.imageUrl)
+                        .load(fullImageUrl)
                         .override(150, 150) // Adjust size as needed for info window
                         .into(object : CustomTarget<Bitmap>() {
                             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -40,8 +45,19 @@ class CustomMarkerInfoWindow(mapView: MapView) : MarkerInfoWindow(R.layout.marke
                                 imageView.setImageDrawable(placeholder)
                             }
                         })
+
+                    imageView.setOnClickListener { view ->
+                        val navController = Navigation.findNavController(view)
+                        val action = R.id.action_mapFragment_to_imageDetailFragment
+                        val bundle = Bundle().apply {
+                            putString("imageUrl", fullImageUrl)
+                            putString("title", entity.title)
+                        }
+                        navController.navigate(action, bundle)
+                    }
                 } else {
                     imageView.visibility = View.GONE
+                    imageView.setOnClickListener(null) // Remove listener if no image
                 }
             }
         }

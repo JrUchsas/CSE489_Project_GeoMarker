@@ -68,6 +68,7 @@ class MapFragment : Fragment() {
         // Show real-time location
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             enableMyLocation()
+            mapView.overlays.add(0, myLocationOverlay)
         } else {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
         }
@@ -92,11 +93,11 @@ class MapFragment : Fragment() {
                 return false
             }
         })
-        mapView.overlays.add(1, mapEventsOverlay)
+        mapView.overlays.add(mapEventsOverlay)
 
         viewModel.entities.observe(viewLifecycleOwner) { entities ->
 
-            mapView.overlays.removeAll { it != myLocationOverlay && it != mapEventsOverlay }
+            mapView.overlays.removeAll { it != myLocationOverlay && it != mapEventsOverlay && it != null }
             entities.forEach { entity ->
                 val marker = Marker(mapView)
                 marker.position = GeoPoint(entity.lat!!.toDouble(), entity.lon!!.toDouble())
@@ -114,11 +115,8 @@ class MapFragment : Fragment() {
     }
 
     private fun enableMyLocation() {
-        if (myLocationOverlay == null) {
-            myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
-            myLocationOverlay?.enableMyLocation()
-            mapView.overlays.add(0, myLocationOverlay)
-        }
+        myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
+        myLocationOverlay?.enableMyLocation()
     }
 
     @Suppress("DEPRECATION")
