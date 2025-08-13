@@ -30,4 +30,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             repository.deleteById(entityId)
         }
     }
+
+    fun refreshEntities() {
+        viewModelScope.launch {
+            repository.refreshEntities()
+        }
+    }
 }

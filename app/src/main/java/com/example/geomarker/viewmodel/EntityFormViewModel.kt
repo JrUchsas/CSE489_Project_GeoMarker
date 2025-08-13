@@ -49,7 +49,7 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
                 }
 
                 // Save to local DB first (offline caching)
-                val localEntity = Entity(title = title, lat = lat, lon = lon, imageUrl = imageUrl)
+                val localEntity = Entity(title = title, lat = lat.toString(), lon = lon.toString(), imageUrl = imageUrl)
                 Log.d("EntityFormViewModel", "Attempting to save entity to local DB: $localEntity")
                 repository.insert(localEntity)
                 Log.d("EntityFormViewModel", "Entity saved to local DB successfully.")
@@ -104,7 +104,7 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
                 }
 
                 // Update local DB first (offline caching)
-                val localEntity = Entity(id = id, title = title, lat = lat, lon = lon, imageUrl = imageUrl)
+                val localEntity = Entity(id = id, title = title, lat = lat.toString(), lon = lon.toString(), imageUrl = imageUrl)
                 repository.update(localEntity)
                 Log.d("EntityFormViewModel", "Entity updated in local DB successfully.")
 

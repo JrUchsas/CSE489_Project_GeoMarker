@@ -36,11 +36,22 @@ class EntityRepository(private val entityDao: EntityDao) {
             if (response.isSuccessful) {
                 val entities = response.body()
                 entities?.let {
+                    Log.d("EntityRepository", "Total entities fetched from API: ${it.size}")
+                    val validEntities = it.filter { entity ->
+                        val latValid = entity.lat?.toDoubleOrNull() != null
+                        val lonValid = entity.lon?.toDoubleOrNull() != null
+                        val imageUrlValid = entity.imageUrl != null && entity.imageUrl.isNotBlank()
+                        val isValid = latValid && lonValid && imageUrlValid
+                        if (!isValid) {
+                            Log.d("EntityRepository", "Filtering out entity: ${entity.title} (Lat: ${entity.lat}, Lon: ${entity.lon}, Image: ${entity.imageUrl})")
+                        }
+                        isValid
+                    }
                     entityDao.deleteAllEntities()
-                    it.forEach { entity ->
+                    validEntities.forEach { entity ->
                         entityDao.insert(entity)
                     }
-                    Log.d("EntityRepository", "Fetched ${it.size} entities from API and saved to local DB.")
+                    Log.d("EntityRepository", "Found ${validEntities.size} valid entities after filtering and saved to local DB.")
                 }
             } else {
                 val errorBody = response.errorBody()?.string()

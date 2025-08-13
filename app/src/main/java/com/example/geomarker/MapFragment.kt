@@ -84,7 +84,7 @@ class MapFragment : Fragment() {
             mapView.overlays.removeAll { it != myLocationOverlay && it != mapEventsOverlay }
             entities.forEach { entity ->
                 val marker = Marker(mapView)
-                marker.position = GeoPoint(entity.lat, entity.lon)
+                marker.position = GeoPoint(entity.lat!!.toDouble(), entity.lon!!.toDouble())
                 marker.title = entity.title
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 marker.infoWindow = CustomMarkerInfoWindow(mapView)
@@ -94,6 +94,7 @@ class MapFragment : Fragment() {
             }
             mapView.invalidate()
         }
+        viewModel.refreshEntities()
         
     }
 

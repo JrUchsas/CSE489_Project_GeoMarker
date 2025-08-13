@@ -9,8 +9,8 @@ import com.google.gson.annotations.SerializedName
 data class Entity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "lat") val lat: Double,
-    @ColumnInfo(name = "lon") val lon: Double,
-    @ColumnInfo(name = "image_url") @SerializedName("image") val imageUrl: String
+    @ColumnInfo(name = "lat") val lat: String?,
+    @ColumnInfo(name = "lon") val lon: String?,
+    @ColumnInfo(name = "image_url") @SerializedName("image") val imageUrl: String?
 )
 
