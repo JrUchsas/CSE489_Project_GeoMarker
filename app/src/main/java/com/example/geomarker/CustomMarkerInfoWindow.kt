@@ -25,6 +25,7 @@ class CustomMarkerInfoWindow(mapView: MapView) : MarkerInfoWindow(R.layout.marke
             val entity = item.relatedObject as? Entity
             if (entity != null) {
                 mView.findViewById<TextView>(R.id.info_title).text = entity.title
+                mView.findViewById<TextView>(R.id.info_description).text = "Lat: ${entity.lat}, Lon: ${entity.lon}"
 
                 val imageView = mView.findViewById<ImageView>(R.id.info_image)
                 if (!entity.imageUrl.isNullOrEmpty()) {
