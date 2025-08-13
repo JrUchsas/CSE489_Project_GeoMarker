@@ -33,6 +33,7 @@ class EntityRepository(private val entityDao: EntityDao, private val database: A
     }
 
     suspend fun refreshEntities() {
+        Log.d("EntityRepository", "refreshEntities() started.")
         try {
             val response = RetrofitClient.apiService.getEntities()
             if (response.isSuccessful) {
@@ -62,7 +63,12 @@ class EntityRepository(private val entityDao: EntityDao, private val database: A
                 Log.e("EntityRepository", "API Error fetching entities: ${response.code()} - $errorBody")
             }
         } catch (e: Exception) {
-            Log.e("EntityRepository", "Error fetching entities from API: ${e.message}", e)
+            if (e is kotlinx.coroutines.CancellationException) {
+                Log.d("EntityRepository", "refreshEntities() job cancelled: ${e.message}")
+            } else {
+                Log.e("EntityRepository", "Error fetching entities from API: ${e.message}", e)
+            }
         }
+        Log.d("EntityRepository", "refreshEntities() finished.")
     }
 }
