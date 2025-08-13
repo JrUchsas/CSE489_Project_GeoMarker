@@ -1,29 +1,27 @@
 package com.example.locmark.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.locmark.model.Entity
-import com.example.locmark.network.RetrofitClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.locmark.model.EntityDao
+import kotlinx.coroutines.flow.Flow
 
-class EntityRepository {
-    private val _entities = MutableLiveData<List<Entity>>()
-    val entities: LiveData<List<Entity>> get() = _entities
+class EntityRepository(private val entityDao: EntityDao) {
 
-    suspend fun fetchEntities() {
-        withContext(Dispatchers.IO) {
-            try {
-                val response = RetrofitClient.apiService.getEntities()
-                if (response.isSuccessful) {
-                    _entities.postValue(response.body() ?: emptyList())
-                } else {
-                    _entities.postValue(emptyList())
-                }
-            } catch (e: Exception) {
-                _entities.postValue(emptyList())
-            }
-        }
+    val allEntities: Flow<List<Entity>> = entityDao.getAllEntities()
+
+    suspend fun insert(entity: Entity) {
+        entityDao.insert(entity)
+    }
+
+    suspend fun update(entity: Entity) {
+        entityDao.update(entity)
+    }
+
+    suspend fun deleteById(entityId: Int) {
+        entityDao.deleteById(entityId)
+    }
+
+    suspend fun getEntityById(entityId: Int): Entity? {
+        return entityDao.getEntityById(entityId)
     }
 }
 

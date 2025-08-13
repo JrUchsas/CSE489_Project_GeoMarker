@@ -25,6 +25,7 @@ import com.example.locmark.viewmodel.EntityFormViewModel
 import com.example.locmark.viewmodel.MapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import android.util.Log // Added import
 
 class EntityFormFragment : Fragment() {
     private lateinit var editTitle: EditText
@@ -67,6 +68,7 @@ class EntityFormFragment : Fragment() {
             pickImageLauncher.launch("image/*")
         }
         btnSave.setOnClickListener {
+            Log.d("EntityFormFragment", "Save button clicked.") // Added log
             val title = editTitle.text.toString()
             val latStr = editLat.text.toString()
             val lonStr = editLon.text.toString()
@@ -84,16 +86,18 @@ class EntityFormFragment : Fragment() {
             viewModel.createEntity(title, latValue, lonValue, image)
         }
         viewModel.saveResult.observe(viewLifecycleOwner) { success ->
+            Log.d("EntityFormFragment", "saveResult observed: $success") // Added log
             if (success == true) {
                 Toast.makeText(requireContext(), "Entity saved!", Toast.LENGTH_SHORT).show()
-                sharedMapViewModel.fetchEntities() // Refresh the list after creation
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+                findNavController().popBackStack()
             }
         }
         viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
+            Log.e("EntityFormFragment", "Error observed: $errorMsg") // Added log
             errorMsg?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
+

@@ -26,13 +26,12 @@ class EntityListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = EntityListAdapter(emptyList())
+        adapter = EntityListAdapter()
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
         viewModel.entities.observe(viewLifecycleOwner) { entities ->
             adapter.submitList(entities)
         }
-        viewModel.fetchEntities()
     }
 }

@@ -66,7 +66,7 @@ class MapFragment : Fragment() {
             }
             mapView.invalidate()
         }
-        viewModel.fetchEntities()
+        
     }
 
     private fun enableMyLocation() {

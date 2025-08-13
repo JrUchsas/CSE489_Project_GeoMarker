@@ -62,10 +62,7 @@ dependencies {
 
     // osmdroid for OpenStreetMap
     implementation("org.osmdroid:osmdroid-android:6.1.16")
-    // Retrofit for networking
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    // GSON converter for Retrofit
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    
     // Coroutines for async tasks
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     // ViewModel and LiveData
