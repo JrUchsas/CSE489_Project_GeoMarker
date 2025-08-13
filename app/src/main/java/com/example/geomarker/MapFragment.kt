@@ -44,6 +44,7 @@ class MapFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Initialize osmdroid config
         Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", 0))
+        Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
         mapView.setMultiTouchControls(true)
         val mapController = mapView.controller
         mapController.setZoom(7.0)
