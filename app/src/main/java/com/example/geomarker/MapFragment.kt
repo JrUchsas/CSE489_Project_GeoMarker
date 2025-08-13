@@ -25,12 +25,15 @@ import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import androidx.activity.OnBackPressedCallback
+import android.widget.Toast
 
 class MapFragment : Fragment() {
     private lateinit var mapView: MapView
     private var myLocationOverlay: MyLocationNewOverlay? = null
     private val viewModel: MapViewModel by viewModels()
     private val LOCATION_PERMISSION_REQUEST = 101
+    private var backPressedTime: Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -42,6 +45,18 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                    requireActivity().finish()
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    Toast.makeText(requireContext(), "Press back again to exit", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
         // Initialize osmdroid config
         Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", 0))
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
