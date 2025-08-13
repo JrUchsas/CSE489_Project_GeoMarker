@@ -2,6 +2,7 @@ package com.example.geomarker.model
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,7 @@ interface EntityDao {
     @Query("SELECT * FROM entities ORDER BY id DESC")
     fun getAllEntities(): Flow<List<Entity>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: Entity)
 
     @Update

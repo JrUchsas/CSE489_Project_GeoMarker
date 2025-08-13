@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "entities")
 data class Entity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int = 0,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "lat") val lat: String?,
     @ColumnInfo(name = "lon") val lon: String?,
