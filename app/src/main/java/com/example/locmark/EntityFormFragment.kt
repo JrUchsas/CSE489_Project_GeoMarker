@@ -27,6 +27,9 @@ import com.example.locmark.viewmodel.MapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.util.Log // Added import
+import androidx.lifecycle.lifecycleScope
+import com.example.locmark.model.Entity
+import kotlinx.coroutines.launch
 
 class EntityFormFragment : Fragment() {
     private lateinit var editTitle: EditText
@@ -41,6 +44,8 @@ class EntityFormFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel: EntityFormViewModel by viewModels()
     private val sharedMapViewModel: MapViewModel by activityViewModels()
+
+    private var currentEntityId: Int = -1 // To store the ID of the entity being edited
 
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -65,6 +70,25 @@ class EntityFormFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Retrieve entityId if editing
+        arguments?.let { bundle ->
+            currentEntityId = EntityFormFragmentArgs.fromBundle(bundle).entityId
+            if (currentEntityId != -1) {
+                // Fetch entity details and pre-fill form
+                lifecycleScope.launch {
+                    val entity = viewModel.getEntityById(currentEntityId)
+                    entity?.let {
+                        editTitle.setText(it.title)
+                        editLat.setText(it.lat.toString())
+                        editLon.setText(it.lon.toString())
+                        imageUri = Uri.parse(it.imagePath)
+                        imagePreview.setImageURI(imageUri)
+                    }
+                }
+            }
+        }
+
         btnSelectImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -84,13 +108,20 @@ class EntityFormFragment : Fragment() {
                 Toast.makeText(requireContext(), "Latitude must be between -90 and 90, Longitude between -180 and 180", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            viewModel.createEntity(title, latValue, lonValue, image)
+
+            if (currentEntityId != -1) {
+                // Update existing entity
+                viewModel.updateEntity(currentEntityId, title, latValue, lonValue, image)
+            } else {
+                // Create new entity
+                viewModel.createEntity(title, latValue, lonValue, image)
+            }
         }
         viewModel.saveResult.observe(viewLifecycleOwner) { success ->
             Log.d("EntityFormFragment", "saveResult observed: $success") // Added log
             if (success == true) {
                 Toast.makeText(requireContext(), "Entity saved!", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
+                findNavController().navigate(R.id.mapFragment)
             }
         }
         viewModel.error.observe(viewLifecycleOwner) { errorMsg ->

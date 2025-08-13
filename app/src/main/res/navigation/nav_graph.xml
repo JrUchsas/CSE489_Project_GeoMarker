@@ -11,9 +11,18 @@
     <fragment
         android:id="@+id/entityFormFragment"
         android:name="com.example.locmark.EntityFormFragment"
-        android:label="Form" />
+        android:label="Form">
+        <argument
+            android:name="entityId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
     <fragment
         android:id="@+id/entityListFragment"
         android:name="com.example.locmark.EntityListFragment"
-        android:label="List" />
+        android:label="List" >
+        <action
+            android:id="@+id/action_entityListFragment_to_entityFormFragment"
+            app:destination="@id/entityFormFragment" />
+    </fragment>
 </navigation>

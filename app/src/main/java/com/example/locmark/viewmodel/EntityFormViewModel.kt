@@ -48,12 +48,47 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
             } catch (e: Exception) {
                 Log.e("EntityFormViewModel", "Error saving entity to local DB: ${e.message}", e)
                 _error.postValue(e.message)
+            }
+        }
+    }
+
+    fun updateEntity(id: Int, title: String, lat: Double, lon: Double, imageUri: Uri?) {
+        viewModelScope.launch {
+            try {
+                val imagePath = imageUri?.toString()
+                if (imagePath == null) {
+                    _error.postValue("Image URI is null")
+                    _saveResult.postValue(false)
+                    return@launch
+                }
+                val entity = Entity(id = id, title = title, lat = lat, lon = lon, imagePath = imagePath)
+                repository.update(entity)
+                _saveResult.postValue(true)
+            } catch (e: Exception) {
+                _error.postValue(e.message)
                 _saveResult.postValue(false)
             }
         }
+    }
+
+    fun deleteEntity(entityId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.deleteById(entityId)
+                _saveResult.postValue(true) // Indicate success of deletion
+            } catch (e: Exception) {
+                _error.postValue(e.message)
+                _saveResult.postValue(false)
+            }
+        }
+    }
+
+    suspend fun getEntityById(entityId: Int): Entity? {
+        return repository.getEntityById(entityId)
     }
 
     private fun resizeBitmap(bitmap: Bitmap, width: Int, height: Int): Bitmap {
         return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 }
+

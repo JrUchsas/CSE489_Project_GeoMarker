@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.locmark.AppDatabase
 import com.example.locmark.model.Entity
 import com.example.locmark.repository.EntityRepository
+import kotlinx.coroutines.launch
 
 class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: EntityRepository
@@ -17,6 +18,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         val entityDao = AppDatabase.getDatabase(application).entityDao()
         repository = EntityRepository(entityDao)
         entities = repository.allEntities.asLiveData(viewModelScope.coroutineContext)
+    }
+
+    fun deleteEntity(entityId: Int) {
+        viewModelScope.launch {
+            repository.deleteById(entityId)
+        }
     }
 }
 
