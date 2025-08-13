@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.locmark"
+    namespace = "com.example.geomarker"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.locmark"
+        applicationId = "com.example.geomarker"
         minSdk = 21
         targetSdk = 36
         versionCode = 1

@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "LocMark"
+rootProject.name = "GeoMarker"
 include(":app")

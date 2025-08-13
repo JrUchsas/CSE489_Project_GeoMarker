@@ -6,11 +6,11 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.locmark.MapFragment"
+        android:name="com.example.geomarker.MapFragment"
         android:label="Map" />
     <fragment
         android:id="@+id/entityFormFragment"
-        android:name="com.example.locmark.EntityFormFragment"
+        android:name="com.example.geomarker.EntityFormFragment"
         android:label="Form">
         <argument
             android:name="entityId"
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/entityListFragment"
-        android:name="com.example.locmark.EntityListFragment"
+        android:name="com.example.geomarker.EntityListFragment"
         android:label="List" >
         <action
             android:id="@+id/action_entityListFragment_to_entityFormFragment"
