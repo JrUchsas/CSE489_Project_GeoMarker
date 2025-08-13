@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.geomarker.model.Entity
 import com.example.geomarker.model.EntityDao
 
-@Database(entities = [Entity::class], version = 1, exportSchema = false)
+@Database(entities = [Entity::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun entityDao(): EntityDao
 
@@ -21,7 +21,8 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "locmark_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = instance
                 instance
             }

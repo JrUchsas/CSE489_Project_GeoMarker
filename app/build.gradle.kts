@@ -75,4 +75,14 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     // Google Play Services Location for FusedLocationProviderClient
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // Retrofit for REST API calls
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 }

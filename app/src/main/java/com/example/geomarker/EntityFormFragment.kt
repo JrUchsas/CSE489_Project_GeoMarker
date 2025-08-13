@@ -82,7 +82,7 @@ class EntityFormFragment : Fragment() {
                         editTitle.setText(it.title)
                         editLat.setText(it.lat.toString())
                         editLon.setText(it.lon.toString())
-                        imageUri = Uri.parse(it.imagePath)
+                        imageUri = Uri.parse(it.imageUrl)
                         imagePreview.setImageURI(imageUri)
                     }
                 }

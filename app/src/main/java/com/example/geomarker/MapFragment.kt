@@ -2,6 +2,8 @@ package com.example.geomarker
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.geomarker.viewmodel.MapViewModel
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
@@ -62,6 +67,9 @@ class MapFragment : Fragment() {
                 marker.position = GeoPoint(entity.lat, entity.lon)
                 marker.title = entity.title
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                marker.infoWindow = CustomMarkerInfoWindow(mapView)
+                marker.relatedObject = entity // Pass the entity to the info window
+
                 mapView.overlays.add(marker)
             }
             mapView.invalidate()

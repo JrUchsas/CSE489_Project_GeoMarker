@@ -10,10 +10,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.geomarker.AppDatabase
+import com.example.geomarker.api.RetrofitClient
 import com.example.geomarker.model.Entity
 import com.example.geomarker.repository.EntityRepository
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
 
 class EntityFormViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,22 +40,55 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
         viewModelScope.launch {
             try {
                 val context = getApplication<Application>()
-                val imagePath = imageUri?.toString() // Store URI as string
+                val imageUrl = imageUri?.toString() // Store URI as string
 
-                if (imagePath == null) {
+                if (imageUrl == null) {
                     _error.postValue("Image URI is null")
                     _saveResult.postValue(false)
                     return@launch
                 }
 
-                val entity = Entity(title = title, lat = lat, lon = lon, imagePath = imagePath)
-                Log.d("EntityFormViewModel", "Attempting to save entity to local DB: $entity")
-                repository.insert(entity)
+                // Save to local DB first (offline caching)
+                val localEntity = Entity(title = title, lat = lat, lon = lon, imageUrl = imageUrl)
+                Log.d("EntityFormViewModel", "Attempting to save entity to local DB: $localEntity")
+                repository.insert(localEntity)
                 Log.d("EntityFormViewModel", "Entity saved to local DB successfully.")
-                _saveResult.postValue(true)
+
+                // Prepare for API call
+                val titlePart = title.toRequestBody("text/plain".toMediaTypeOrNull())
+                val latPart = lat.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                val lonPart = lon.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
+                val imageFile = uriToFile(context, imageUri)
+                val imagePart = MultipartBody.Part.createFormData(
+                    "image",
+                    imageFile.name,
+                    imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+                )
+
+                // Make API call
+                val response = RetrofitClient.apiService.createEntity(
+                    title = titlePart,
+                    lat = latPart,
+                    lon = lonPart,
+                    image = imagePart
+                )
+
+                if (response.isSuccessful) {
+                    Log.d("EntityFormViewModel", "Entity created on API successfully.")
+                    _saveResult.postValue(true)
+                    repository.refreshEntities() // Refresh local cache after successful API call
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("EntityFormViewModel", "API Error: ${response.code()} - $errorBody")
+                    _error.postValue("Failed to create entity on server: ${response.code()} - $errorBody")
+                    _saveResult.postValue(false)
+                }
+
             } catch (e: Exception) {
-                Log.e("EntityFormViewModel", "Error saving entity to local DB: ${e.message}", e)
+                Log.e("EntityFormViewModel", "Error creating entity: ${e.message}", e)
                 _error.postValue(e.message)
+                _saveResult.postValue(false)
             }
         }
     }
@@ -55,16 +96,40 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
     fun updateEntity(id: Int, title: String, lat: Double, lon: Double, imageUri: Uri?) {
         viewModelScope.launch {
             try {
-                val imagePath = imageUri?.toString()
-                if (imagePath == null) {
+                val imageUrl = imageUri?.toString()
+                if (imageUrl == null) {
                     _error.postValue("Image URI is null")
                     _saveResult.postValue(false)
                     return@launch
                 }
-                val entity = Entity(id = id, title = title, lat = lat, lon = lon, imagePath = imagePath)
-                repository.update(entity)
-                _saveResult.postValue(true)
+
+                // Update local DB first (offline caching)
+                val localEntity = Entity(id = id, title = title, lat = lat, lon = lon, imageUrl = imageUrl)
+                repository.update(localEntity)
+                Log.d("EntityFormViewModel", "Entity updated in local DB successfully.")
+
+                // Make API call
+                val response = RetrofitClient.apiService.updateEntity(
+                    id = id,
+                    title = title,
+                    lat = lat,
+                    lon = lon,
+                    image = imageUrl // Assuming image is sent as a URL string for update
+                )
+
+                if (response.isSuccessful) {
+                    Log.d("EntityFormViewModel", "Entity updated on API successfully.")
+                    _saveResult.postValue(true)
+                    repository.refreshEntities() // Refresh local cache after successful API call
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("EntityFormViewModel", "API Error: ${response.code()} - $errorBody")
+                    _error.postValue("Failed to update entity on server: ${response.code()} - $errorBody")
+                    _saveResult.postValue(false)
+                }
+
             } catch (e: Exception) {
+                Log.e("EntityFormViewModel", "Error updating entity: ${e.message}", e)
                 _error.postValue(e.message)
                 _saveResult.postValue(false)
             }
@@ -74,9 +139,25 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
     fun deleteEntity(entityId: Int) {
         viewModelScope.launch {
             try {
+                // Delete from local DB first
                 repository.deleteById(entityId)
-                _saveResult.postValue(true) // Indicate success of deletion
+                Log.d("EntityFormViewModel", "Entity deleted from local DB successfully.")
+
+                // Make API call to delete from server
+                val response = RetrofitClient.apiService.deleteEntity(entityId)
+
+                if (response.isSuccessful) {
+                    Log.d("EntityFormViewModel", "Entity deleted from API successfully.")
+                    _saveResult.postValue(true) // Indicate success of deletion
+                    repository.refreshEntities() // Refresh local cache after successful API call
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("EntityFormViewModel", "API Error: ${response.code()} - $errorBody")
+                    _error.postValue("Failed to delete entity from server: ${response.code()} - $errorBody")
+                    _saveResult.postValue(false)
+                }
             } catch (e: Exception) {
+                Log.e("EntityFormViewModel", "Error deleting entity: ${e.message}", e)
                 _error.postValue(e.message)
                 _saveResult.postValue(false)
             }
@@ -87,8 +168,17 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
         return repository.getEntityById(entityId)
     }
 
+    private fun uriToFile(context: Application, uri: Uri): File {
+        val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}")
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            FileOutputStream(file).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+        return file
+    }
+
     private fun resizeBitmap(bitmap: Bitmap, width: Int, height: Int): Bitmap {
         return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 }
-

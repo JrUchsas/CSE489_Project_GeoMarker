@@ -55,14 +55,6 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/app/src/main/res/layout/item_entity.xml">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/app/src/main/res/layout/item_entity.xml" />
-              <option name="updatedContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&#10;    android:layout_width=&quot;match_parent&quot;&#10;    android:layout_height=&quot;wrap_content&quot;&#10;    android:orientation=&quot;horizontal&quot;&#10;    android:padding=&quot;16dp&quot;&gt;&#10;    &lt;TextView&#10;        android:id=&quot;@+id/entityTitle&quot;&#10;        android:layout_width=&quot;0dp&quot;&#10;        android:layout_height=&quot;wrap_content&quot;&#10;        android:layout_weight=&quot;1&quot;&#10;        android:text=&quot;Entity Title&quot;&#10;        android:textSize=&quot;16sp&quot; /&gt;&#10;    &lt;Button&#10;        android:id=&quot;@+id/btnEdit&quot;&#10;        android:layout_width=&quot;wrap_content&quot;&#10;        android:layout_height=&quot;wrap_content&quot;&#10;        android:text=&quot;Edit&quot; /&gt;&#10;    &lt;Button&#10;        android:id=&quot;@+id/btnDelete&quot;&#10;        android:layout_width=&quot;wrap_content&quot;&#10;        android:layout_height=&quot;wrap_content&quot;&#10;        android:text=&quot;Delete&quot; /&gt;&#10;&lt;/LinearLayout&gt;&#10;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/main_activity.xml">
           <value>
             <PendingDiffInfo>

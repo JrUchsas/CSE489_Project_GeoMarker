@@ -22,4 +22,7 @@ interface EntityDao {
 
     @Query("SELECT * FROM entities WHERE id = :entityId")
     suspend fun getEntityById(entityId: Int): Entity?
+
+    @Query("DELETE FROM entities")
+    suspend fun deleteAllEntities()
 }

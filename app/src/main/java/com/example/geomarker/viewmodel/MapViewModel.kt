@@ -18,6 +18,11 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         val entityDao = AppDatabase.getDatabase(application).entityDao()
         repository = EntityRepository(entityDao)
         entities = repository.allEntities.asLiveData(viewModelScope.coroutineContext)
+
+        // Fetch entities from API and refresh local DB when ViewModel is initialized
+        viewModelScope.launch {
+            repository.refreshEntities()
+        }
     }
 
     fun deleteEntity(entityId: Int) {
@@ -26,4 +31,3 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
-
