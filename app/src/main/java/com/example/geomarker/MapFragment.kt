@@ -79,7 +79,7 @@ class MapFragment : Fragment() {
         mapView.overlays.add(1, mapEventsOverlay)
 
         viewModel.entities.observe(viewLifecycleOwner) { entities ->
-            // Remove all overlays except myLocationOverlay
+
             mapView.overlays.removeAll { it != myLocationOverlay && it != mapEventsOverlay }
             entities.forEach { entity ->
                 val marker = Marker(mapView)
@@ -87,7 +87,7 @@ class MapFragment : Fragment() {
                 marker.title = entity.title
                 marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 marker.infoWindow = CustomMarkerInfoWindow(mapView)
-                marker.relatedObject = entity // Pass the entity to the info window
+                marker.relatedObject = entity
 
                 mapView.overlays.add(marker)
             }

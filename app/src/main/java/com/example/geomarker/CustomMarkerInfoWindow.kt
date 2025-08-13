@@ -49,7 +49,7 @@ class CustomMarkerInfoWindow(mapView: MapView) : MarkerInfoWindow(R.layout.marke
 
     override fun onClose() {
         super.onClose()
-        // Clear image to prevent flickering if the same info window is reused
+
         mView.findViewById<ImageView>(R.id.info_image).setImageDrawable(null)
         mView.findViewById<ImageView>(R.id.info_image).visibility = View.GONE
     }

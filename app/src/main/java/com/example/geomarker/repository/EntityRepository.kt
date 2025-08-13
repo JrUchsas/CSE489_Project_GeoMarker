@@ -36,9 +36,9 @@ class EntityRepository(private val entityDao: EntityDao) {
             if (response.isSuccessful) {
                 val entities = response.body()
                 entities?.let {
-                    entityDao.deleteAllEntities() // Clear existing data
+                    entityDao.deleteAllEntities()
                     it.forEach { entity ->
-                        entityDao.insert(entity) // Insert new data from API
+                        entityDao.insert(entity)
                     }
                     Log.d("EntityRepository", "Fetched ${it.size} entities from API and saved to local DB.")
                 }

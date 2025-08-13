@@ -11,6 +11,6 @@ data class Entity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "lat") val lat: Double,
     @ColumnInfo(name = "lon") val lon: Double,
-    @ColumnInfo(name = "image_url") @SerializedName("image") val imageUrl: String // Renamed and added SerializedName
+    @ColumnInfo(name = "image_url") @SerializedName("image") val imageUrl: String
 )
 

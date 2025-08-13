@@ -71,7 +71,7 @@ class EntityFormFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Retrieve entityId if editing
+
         arguments?.let { bundle ->
             currentEntityId = EntityFormFragmentArgs.fromBundle(bundle).entityId
             if (currentEntityId != -1) {
@@ -110,22 +110,22 @@ class EntityFormFragment : Fragment() {
             }
 
             if (currentEntityId != -1) {
-                // Update existing entity
+
                 viewModel.updateEntity(currentEntityId, title, latValue, lonValue, image)
             } else {
-                // Create new entity
+
                 viewModel.createEntity(title, latValue, lonValue, image)
             }
         }
         viewModel.saveResult.observe(viewLifecycleOwner) { success ->
-            Log.d("EntityFormFragment", "saveResult observed: $success") // Added log
+            Log.d("EntityFormFragment", "saveResult observed: $success")
             if (success == true) {
                 Toast.makeText(requireContext(), "Entity saved!", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.mapFragment)
             }
         }
         viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
-            Log.e("EntityFormFragment", "Error observed: $errorMsg") // Added log
+            Log.e("EntityFormFragment", "Error observed: $errorMsg")
             errorMsg?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
