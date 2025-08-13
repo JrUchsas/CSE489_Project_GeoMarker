@@ -18,8 +18,10 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.geomarker.viewmodel.MapViewModel
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -59,9 +61,26 @@ class MapFragment : Fragment() {
             findNavController().navigate(R.id.entityFormFragment)
         }
 
+        val mapEventsOverlay = org.osmdroid.views.overlay.MapEventsOverlay(object : org.osmdroid.events.MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: org.osmdroid.util.GeoPoint?): Boolean {
+                // Close all info windows
+                mapView.overlays.forEach {
+                    if (it is org.osmdroid.views.overlay.Marker) {
+                        it.closeInfoWindow()
+                    }
+                }
+                return true
+            }
+
+            override fun longPressHelper(p: org.osmdroid.util.GeoPoint?): Boolean {
+                return false
+            }
+        })
+        mapView.overlays.add(1, mapEventsOverlay)
+
         viewModel.entities.observe(viewLifecycleOwner) { entities ->
             // Remove all overlays except myLocationOverlay
-            mapView.overlays.removeAll { it != myLocationOverlay }
+            mapView.overlays.removeAll { it != myLocationOverlay && it != mapEventsOverlay }
             entities.forEach { entity ->
                 val marker = Marker(mapView)
                 marker.position = GeoPoint(entity.lat, entity.lon)
