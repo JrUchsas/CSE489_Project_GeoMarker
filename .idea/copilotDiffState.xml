@@ -72,15 +72,6 @@
             </PendingDiffInfo>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/app/src/main/res/values/styles.xml">
-          <value>
-            <PendingDiffInfo>
-              <option name="filePath" value="$PROJECT_DIR$/app/src/main/res/values/styles.xml" />
-              <option name="originalContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;resources&gt;&#10;    &lt;!-- Removed duplicate Theme.LocMark definition. Use only in themes.xml --&gt;&#10;&lt;/resources&gt;&#10;" />
-              <option name="updatedContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;resources&gt;&#10;    &lt;!-- No theme definitions here. Only use themes.xml for Theme.LocMark. --&gt;&#10;&lt;/resources&gt;" />
-            </PendingDiffInfo>
-          </value>
-        </entry>
       </map>
     </option>
   </component>

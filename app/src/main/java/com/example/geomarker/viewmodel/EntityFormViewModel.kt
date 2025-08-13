@@ -33,7 +33,7 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         val entityDao = AppDatabase.getDatabase(application).entityDao()
-        repository = EntityRepository(entityDao)
+        repository = EntityRepository(entityDao, AppDatabase.getDatabase(application))
     }
 
     fun createEntity(title: String, lat: Double, lon: Double, imageUri: Uri?) {

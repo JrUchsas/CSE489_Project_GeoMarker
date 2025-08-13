@@ -4,9 +4,11 @@ import android.util.Log
 import com.example.geomarker.api.RetrofitClient
 import com.example.geomarker.model.Entity
 import com.example.geomarker.model.EntityDao
+import com.example.geomarker.AppDatabase
 import kotlinx.coroutines.flow.Flow
+import androidx.room.withTransaction
 
-class EntityRepository(private val entityDao: EntityDao) {
+class EntityRepository(private val entityDao: EntityDao, private val database: AppDatabase) {
 
     val allEntities: Flow<List<Entity>> = entityDao.getAllEntities()
 
@@ -47,9 +49,11 @@ class EntityRepository(private val entityDao: EntityDao) {
                         }
                         isValid
                     }
-                    entityDao.deleteAllEntities()
-                    validEntities.forEach { entity ->
-                        entityDao.insert(entity)
+                    database.withTransaction {
+                        entityDao.deleteAllEntities()
+                        validEntities.forEach { entity ->
+                            entityDao.insert(entity)
+                        }
                     }
                     Log.d("EntityRepository", "Found ${validEntities.size} valid entities after filtering and saved to local DB.")
                 }
