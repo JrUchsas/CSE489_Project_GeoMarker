@@ -139,11 +139,11 @@ class EntityFormViewModel(application: Application) : AndroidViewModel(applicati
     fun deleteEntity(entityId: Int) {
         viewModelScope.launch {
             try {
-                // Delete from local DB first
+
                 repository.deleteById(entityId)
                 Log.d("EntityFormViewModel", "Entity deleted from local DB successfully.")
 
-                // Make API call to delete from server
+
                 val response = RetrofitClient.apiService.deleteEntity(entityId)
 
                 if (response.isSuccessful) {

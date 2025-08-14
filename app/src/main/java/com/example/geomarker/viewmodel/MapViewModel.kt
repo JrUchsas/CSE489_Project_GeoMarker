@@ -19,7 +19,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         repository = EntityRepository(entityDao, AppDatabase.getDatabase(application))
         entities = repository.allEntities.asLiveData(viewModelScope.coroutineContext)
 
-        // Fetch entities from API and refresh local DB when ViewModel is initialized
         viewModelScope.launch {
             repository.refreshEntities()
         }
